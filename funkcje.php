@@ -33,24 +33,47 @@ function pokaz_tylko($jakie) {
 function dodaj() {
     $file = fopen('data.txt', 'a+');
     
-    $nazwisko = $_POST['nazwisko'];
-    $wiek = $_POST['wiek'];
-    $panstwo = $_POST['panstwo'];
-    $email = $_POST['email'];
-    $tech = '';
-
-    foreach ($_POST['tech'] as $v) {
-        $tech .= "$v|";
-    }
-
-    $platnosc = $_POST['platnosc'];
-
-    $line = "$nazwisko,$wiek,$panstwo,$email,$tech,$platnosc\n";
+    $args = array('nazwisko' => 
+        ['filter' => FILTER_VALIDATE_REGEXP,
+        'options' => ['regexp' => '/^[A-Z]{1}[a-ząęłńśćźżó-]{1,25}$/']],
+        'panstwo'=> FILTER_SANITIZE_FULL_SPECIAL_CHARS,
+        'tech'=> ['filter' => FILTER_SANITIZE_FULL_SPECIAL_CHARS,'flags' => FILTER_REQUIRE_ARRAY],
+        'email' => FILTER_VALIDATE_EMAIL
+    );
     
-    fwrite($file, $line);
-    fclose($file);
+    $dane = filter_input_array(INPUT_POST, $args);
+    var_dump($dane);
+    
+    $errors = "";
+    foreach ($dane as $key => $val) {
+        if ($val === false or $val === NULL) {
+            $errors .= $key . " ";
+        }
+    }
+    
+    if ($errors === "") {
+        var_dump($dane);
+        //         $nazwisko = $_POST['nazwisko'];
+        // $wiek = $_POST['wiek'];
+        // $panstwo = $_POST['panstwo'];
+        // $email = $_POST['email'];
+        // $tech = '';
 
-    echo 'zapisane do pliku';
+        // foreach ($_POST['tech'] as $v) {
+        //     $tech .= "$v|";
+        // }
+
+        // $platnosc = $_POST['platnosc'];
+
+        // $line = "$nazwisko,$wiek,$panstwo,$email,$tech,$platnosc\n";
+        
+        // fwrite($file, $line);
+        // fclose($file);
+
+        echo 'zapisane do pliku';
+    } else {
+        echo "<br>Niepoprawne dane: " . $errors;
+    }
 }
 
 function wyswietl_form() {
