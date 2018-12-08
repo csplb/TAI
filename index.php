@@ -1,3 +1,6 @@
+<?php
+    require 'funkcje.php';
+?>
 <!DOCTYPE html>
 <html>
 <head>
@@ -10,55 +13,18 @@
 </head>
 <body>
 <div class="container">
-    <form action="odbierz.php" method="post">
-        <div class="table-responsive">
-        <h1>Przykładowy formularz</h1>
-        <table class="table">
-            <tr>
-                <td><label for="nazwisko">Nazwisko:</label></td>
-                <td><input id="nazwisko" type="text" name="nazwisko" class="form-control" /></td>
-            </tr>
-            <tr>
-                <td><label for="wiek">Wiek:</label></td>
-                <td><input id="wiek" type="number" name="wiek" class="form-control" /></td>
-            </tr>
-            <tr>
-                <td><label for="panstwo">Państwo:</label></td>
-                <td><select id="panstwo" name="panstwo" class="form-control">
-                        <option value="pl">Polska</option>
-                        <option value="us">USA</option>
-                    </select>
-                </td>
-            </tr>
-            <tr>
-                <td><label for="email">Email:</label></td>
-                <td><input id="email" type="email" name="email" class="form-control" /></td>
-            </tr>
-            <tr>
-                <td colspan="2">
-                    <div class="form-group">
-                    <h2>Zamawiam tutorial z języka:</h2>    
-                        <div class="form-check"><label class="form-check-label"><input type="checkbox" class="form-check-input" name="tech[]" value="cpp" /> C/C++ </label></div>
-                        <div class="form-check"><label class="form-check-label"><input type="checkbox" class="form-check-input" name="tech[]" value="php" /> PHP </label></div>
-                        <div class="form-check"><label class="form-check-label"><input type="checkbox" class="form-check-input" name="tech[]" value="java" /> Java </label></div>
-                    </div>
-                </td>
-            </tr>
-            <tr>
-                <td colspan="2">
-                    <h2>Sposób zapłaty:</h2>
-                    <div class="form-radio"><label class="form-radio-label"><input type="radio" name="platnosc" value="visa" class="form-radio-input" checked> Visa</label></div>
-                    <div class="form-radio"><label class="form-radio-label"><input type="radio" name="platnosc" value="mastercard" class="form-radio-input"> Mastercard</label></div>
-                    <div class="form-radio"><label class="form-radio-label"><input type="radio" name="platnosc" value="transfer" class="form-radio-input"> Przelew</label></div>
-                </td>
-            </tr>
-            <tr>
-                <td colspan="2"><input type="submit" value="Wyślij" class="form-control btn btn-primary" /></td>
-            </tr>
-        </table>
-        </div>
-    </form>
+    <?php 
 
-    </div>
+        if (isset($_REQUEST['pokaz'])) {
+            pokaz();
+        } else if (isset($_REQUEST['wyslij'])) {
+            dodaj();
+        } else if (isset($_REQUEST['pokazjava'])) {
+            pokaz_tylko('java');
+        } else {
+            wyswietl_form();
+        } 
+    ?>
+</div>
 </body>
 </html>
