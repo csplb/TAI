@@ -1,23 +1,23 @@
 <?php
-function pokaz() {
-    echo '<table class="table">';
-    $file = file('data.txt');
-    foreach ($file as $line) {
-        echo '<tr>';
-        $elements = explode(',', $line);
-        foreach ($elements as $v) {
-            echo "<td>$v</td>";
-        }
-        echo '</tr>';
-    }
-    echo '</table>';
+
+require 'klasy/Baza.php';
+
+$b = new Baza("localhost", "root", "", "klienci");
+
+function pokaz()
+{
+    global $b;
+    $html = $b->select("SELECT * FROM klienci", array('Id', 'Nazwisko', 'Wiek'));
+
+    echo $html;
 }
 
-function pokaz_tylko($jakie) {
+function pokaz_tylko($jakie)
+{
     echo '<table class="table">';
     $file = file('data.txt');
     foreach ($file as $line) {
-        if (strpos($line, $jakie) === FALSE)
+        if (strpos($line, $jakie) === false)
             continue;
 
         echo '<tr>';
@@ -30,53 +30,62 @@ function pokaz_tylko($jakie) {
     echo '</table>';
 }
 
-function dodaj() {
-    $file = fopen('data.txt', 'a+');
-    
-    $args = array('nazwisko' => 
-        ['filter' => FILTER_VALIDATE_REGEXP,
-        'options' => ['regexp' => '/^[A-Z]{1}[a-ząęłńśćźżó-]{1,25}$/']],
-        'panstwo'=> FILTER_SANITIZE_FULL_SPECIAL_CHARS,
-        'tech'=> ['filter' => FILTER_SANITIZE_FULL_SPECIAL_CHARS,'flags' => FILTER_REQUIRE_ARRAY],
+function dodaj()
+{
+    global $b;
+
+    $args = array(
+        'nazwisko' =>
+            [
+            'filter' => FILTER_VALIDATE_REGEXP,
+            'options' => ['regexp' => '/^[A-Z]{1}[a-ząęłńśćźżó-]{1,25}$/']
+        ],
+        'panstwo' => FILTER_SANITIZE_FULL_SPECIAL_CHARS,
+        'tech' => ['filter' => FILTER_SANITIZE_FULL_SPECIAL_CHARS, 'flags' => FILTER_REQUIRE_ARRAY],
         'email' => FILTER_VALIDATE_EMAIL
     );
-    
+
     $dane = filter_input_array(INPUT_POST, $args);
-    var_dump($dane);
-    
+
     $errors = "";
     foreach ($dane as $key => $val) {
-        if ($val === false or $val === NULL) {
+        if ($val === false or $val === null) {
             $errors .= $key . " ";
         }
     }
-    
+
     if ($errors === "") {
-        var_dump($dane);
-        //         $nazwisko = $_POST['nazwisko'];
-        // $wiek = $_POST['wiek'];
-        // $panstwo = $_POST['panstwo'];
-        // $email = $_POST['email'];
-        // $tech = '';
+        $nazwisko = $_POST['nazwisko'];
+        $wiek = $_POST['wiek'];
+        $panstwo = $_POST['panstwo'];
+        $email = $_POST['email'];
+        $tech = '';
 
-        // foreach ($_POST['tech'] as $v) {
-        //     $tech .= "$v|";
-        // }
+        foreach ($_POST['tech'] as $v) {
+            $tech .= "$v,";
+        }
 
-        // $platnosc = $_POST['platnosc'];
+        $tech = substr($tech, 0, -1);
 
-        // $line = "$nazwisko,$wiek,$panstwo,$email,$tech,$platnosc\n";
-        
-        // fwrite($file, $line);
-        // fclose($file);
+        $platnosc = $_POST['platnosc'];
 
-        echo 'zapisane do pliku';
+        $line = "INSERT INTO klienci VALUES (NULL, '$nazwisko', $wiek, '$panstwo', '$email', '$tech', '$platnosc');";
+        var_dump($line);
+
+        if ($b->insert($line)) {
+            echo 'zapisane do bazy';
+        } else {
+            echo 'błąd!';
+        }
+
+
     } else {
         echo "<br>Niepoprawne dane: " . $errors;
     }
 }
 
-function wyswietl_form() {
+function wyswietl_form()
+{
     echo '<form action="index.php" method="post">
     <div class="table-responsive">
     <h1>Przykładowy formularz</h1>
@@ -92,8 +101,7 @@ function wyswietl_form() {
         <tr>
             <td><label for="panstwo">Państwo:</label></td>
             <td><select id="panstwo" name="panstwo" class="form-control">
-                    <option value="pl">Polska</option>
-                    <option value="us">USA</option>
+                    <option>Polska</option>                
                 </select>
             </td>
         </tr>
@@ -116,7 +124,7 @@ function wyswietl_form() {
                 <h2>Sposób zapłaty:</h2>
                 <div class="form-radio"><label class="form-radio-label"><input type="radio" name="platnosc" value="visa" class="form-radio-input" checked> Visa</label></div>
                 <div class="form-radio"><label class="form-radio-label"><input type="radio" name="platnosc" value="mastercard" class="form-radio-input"> Mastercard</label></div>
-                <div class="form-radio"><label class="form-radio-label"><input type="radio" name="platnosc" value="transfer" class="form-radio-input"> Przelew</label></div>
+                <div class="form-radio"><label class="form-radio-label"><input type="radio" name="platnosc" value="Przelew" class="form-radio-input"> Przelew</label></div>
             </td>
         </tr>
         <tr>

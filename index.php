@@ -1,5 +1,5 @@
 <?php
-    require 'funkcje.php';
+require 'funkcje.php';
 ?>
 <!DOCTYPE html>
 <html>
@@ -15,15 +15,15 @@
 <div class="container">
     <?php 
 
-        if (isset($_REQUEST['pokaz'])) {
-            pokaz();
-        } else if (isset($_REQUEST['wyslij'])) {
-            dodaj();
-        } else if (isset($_REQUEST['pokazjava'])) {
-            pokaz_tylko('java');
-        } else {
-            wyswietl_form();
-        } 
+    if (isset($_REQUEST['pokaz'])) {
+        pokaz();
+    } else if (isset($_REQUEST['wyslij'])) {
+        dodaj();
+    } else if (isset($_REQUEST['pokazjava'])) {
+        pokaz_tylko('java');
+    } else {
+        wyswietl_form();
+    }
     ?>
 </div>
 </body>
